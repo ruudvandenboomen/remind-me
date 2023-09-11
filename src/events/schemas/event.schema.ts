@@ -23,3 +23,5 @@ export class Event {
 }
 
 export const EventSchema = SchemaFactory.createForClass(Event);
+
+EventSchema.index({ description: 1, type: 1 }, { unique: true }); // Unique compound index
