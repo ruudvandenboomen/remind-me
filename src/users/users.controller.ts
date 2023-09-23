@@ -24,11 +24,9 @@ export class UsersController {
     return user;
   }
 
-  @Get(':username')
-  async getUserByUsername(
-    @Param('username') username: string,
-  ): Promise<User | null> {
-    const user = await this.usersService.findByUsername(username);
+  @Get(':email')
+  async getUserByUsername(@Param('email') email: string): Promise<User | null> {
+    const user = await this.usersService.findByEmail(email);
     if (!user) {
       throw new NotFoundException('User not found');
     }

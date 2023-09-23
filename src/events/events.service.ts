@@ -7,6 +7,7 @@ import { Event, EventType } from './schemas/event.schema';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { CreateEventDto } from './dto/create-event.dto';
 import * as fs from 'fs';
+
 @Injectable()
 export class EventsService {
   constructor(
@@ -18,11 +19,16 @@ export class EventsService {
     return createdEvent.save();
   }
 
-  async findAll(): Promise<Event[]> {
+  async findAll(events: Event[]): Promise<Event[]> {
     const today = new Date();
 
     return this.eventModel
       .aggregate([
+        {
+          $match: {
+            _id: { $in: events.map((event) => event._id) },
+          },
+        },
         {
           $project: {
             description: 1,
@@ -78,7 +84,7 @@ export class EventsService {
     return this.eventModel.findByIdAndRemove(id).exec();
   }
 
-  async saveBirthdayData(filePath: string): Promise<void> {
+  async getBirthdayData(filePath: string): Promise<Event[]> {
     const fileContents = fs.readFileSync(filePath, 'utf-8');
 
     const contactData = [];
@@ -100,16 +106,11 @@ export class EventsService {
         event.date = new Date(birthday);
         event.description = name;
         event.type = EventType.Birth;
+        event.save();
         contactData.push(event);
       }
     }
 
-    await this.eventModel
-      .insertMany(contactData, {
-        ordered: false,
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    return contactData;
   }
 }

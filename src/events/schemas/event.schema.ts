@@ -1,7 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
-
-export type CatDocument = HydratedDocument<Event>;
+import { Document } from 'mongoose';
 
 export enum EventType {
   Birth = 'birth',
@@ -11,7 +9,7 @@ export enum EventType {
 }
 
 @Schema()
-export class Event {
+export class Event extends Document {
   @Prop({ required: true })
   description: string;
 

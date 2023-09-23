@@ -28,7 +28,7 @@ export class UsersService {
     }
 
     // Hash the password before saving it
-    const hashedPassword = await bcrypt.hash(password, 10); // Use a suitable salt round (e.g., 10)
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = new this.userModel({
       username,
@@ -39,15 +39,37 @@ export class UsersService {
     return user.save();
   }
 
-  async findByUsername(username: string): Promise<User | null> {
-    return this.userModel.findOne({ username }).exec();
+  async createEvents(userId: string, eventData: Event[]) {
+    const user = await this.userModel.findById(userId).exec();
+    if (!user) {
+      throw new Error('User not found');
+    }
+    for (const event of eventData) {
+      user.events.push(event);
+    }
+
+    await user.save();
   }
 
-  async getUserEvents(userId: string): Promise<Event[]> {
+  async getEventsForUser(userId: string): Promise<Event[]> {
     const user = await this.userModel
       .findById(userId)
       .populate('events')
       .exec();
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    return user.events;
+  }
+
+  async findByEmail(email: string): Promise<User | null> {
+    return this.userModel.findOne({ email }).exec();
+  }
+
+  async getUserEvents(userId: string): Promise<Event[]> {
+    const user = await this.userModel.findById(userId).exec();
 
     if (!user) {
       throw new NotFoundException('User not found');

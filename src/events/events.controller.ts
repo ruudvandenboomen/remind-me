@@ -9,6 +9,8 @@ import {
   UseInterceptors,
   UploadedFile,
   BadRequestException,
+  UseGuards,
+  Req,
 } from '@nestjs/common';
 import { EventsService } from './events.service';
 import { CreateEventDto } from './dto/create-event.dto';
@@ -16,7 +18,15 @@ import { UpdateEventDto } from './dto/update-event.dto';
 import { FileInterceptor } from '@nestjs/platform-express/multer';
 import { extname } from 'path';
 import { diskStorage } from 'multer';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.gaurd';
+import { Request } from 'express';
+import { UsersService } from 'src/users/users.service';
 
+export interface IGetUserAuthInfoRequest extends Request {
+  user: {
+    userId: string;
+  }; 
+}
 export const vcfFileFilter = (req: any, file: any, callback: any) => {
   if (extname(file.originalname) !== '.vcf') {
     return callback(new Error('Only VCF files are allowed'));
@@ -33,7 +43,10 @@ export const vcfStorage = diskStorage({
 });
 @Controller('events')
 export class EventsController {
-  constructor(private readonly eventService: EventsService) {}
+  constructor(
+    private readonly eventService: EventsService,
+    private readonly userService: UsersService,
+  ) {}
 
   @Post()
   create(@Body() createEventDto: CreateEventDto) {
@@ -41,8 +54,10 @@ export class EventsController {
   }
 
   @Get()
-  findAll() {
-    return this.eventService.findAll();
+  @UseGuards(JwtAuthGuard)
+  async findAll(@Req() req: IGetUserAuthInfoRequest) {
+    const events = await this.userService.getEventsForUser(req.user.userId);
+    return this.eventService.findAll(events);
   }
 
   @Get(':id')
@@ -61,21 +76,25 @@ export class EventsController {
   }
 
   @Post('upload')
+  @UseGuards(JwtAuthGuard)
   @UseInterceptors(
     FileInterceptor('vcfFile', {
       storage: vcfStorage,
       fileFilter: vcfFileFilter,
     }),
   )
-  async uploadVcfFile(@UploadedFile() file: any) {
+  async uploadVcfFile(
+    @Req() req: IGetUserAuthInfoRequest,
+    @UploadedFile() file: any,
+  ) {
     // You can process the uploaded VCF file here
     if (!file) {
       throw new BadRequestException('No VCF file uploaded');
     }
 
     // Extract birthday data from the uploaded VCF file
-    this.eventService.saveBirthdayData(file.path);
-
+    const eventData = await this.eventService.getBirthdayData(file.path);
+    this.userService.createEvents(req.user.userId, eventData);
     return {
       message: 'Events created successfully',
     };
