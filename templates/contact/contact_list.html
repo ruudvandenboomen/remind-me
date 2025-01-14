@@ -1,0 +1,21 @@
+{% extends "../base/base.html" %}
+
+{% block content %}
+    {% include "../base/navbar.html" %}
+    <h3 style="text-align: center;">Contacts</h3>
+    <section id="contact-list">
+        <div class="container">
+            <div class="row border-bottom pb-2 mb-3 custom-header-bg text-white">
+                <div class="col-2">Name</div>
+                <div class="col-3">Modify?</div>
+                <div class="col-3">Remove?</div>
+            </div>
+        </div>  
+        {% for contact in contacts %}
+            {% include "../contact/partials/contact.html" %}
+        {% empty %}
+            <p style="text-align: center;">No contacts in your shelf 🙈</p>
+        {% endfor %}
+        </div>
+    </section>
+{% endblock %}

@@ -1,0 +1,18 @@
+default_language_version:
+  python: python3  # Use system python3 (should be >=py36 for black)
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.3.4
+    hooks:
+      - id: ruff
+        args: [
+          --fix,
+          --exit-non-zero-on-fix
+        ]
+      - id: ruff-format
+  - repo: https://github.com/compilerla/conventional-pre-commit
+    rev: v3.6.0
+    hooks:
+      - id: conventional-pre-commit
+        stages: [commit-msg]
+        args: []
