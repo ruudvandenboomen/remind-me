@@ -1,0 +1,18 @@
+{% extends "../base/base.html" %}
+
+{% block content %}
+<div class="flex items-center justify-center h-screen">
+    <div class="p-6 bg-gray-200 rounded-lg shadow-md">
+        <form hx-post="{% url 'contacts:upload' %}" hx-swap="innerHTML" hx-target="#response-container"
+            enctype="multipart/form-data" method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button class="btn" type="submit">Upload VCF</button>
+        </form>
+    </div>
+</div>
+
+<div id="response-container">
+    <!-- Response from the server will be swapped here -->
+</div>
+{% endblock %}

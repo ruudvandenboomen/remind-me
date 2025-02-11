@@ -1,8 +1,8 @@
 {% extends "../base/base.html" %}
 
 {% block content %}
-    {% include "../base/navbar.html" %}
-    <h3 style="text-align: center;">Add a Book</h3>
+{% include "../base/navbar.html" %}
+<!-- <h3 style="text-align: center;">Add a Contact</h3>
     <div class="container text-center">
         <div class="row align-items-start">
             <div class="col"></div>
@@ -13,5 +13,17 @@
                     <button class="btn button-primary" type="submit">Save</button>
                 </form>
             </div>  
-            <div class="col"></div>
+            <div class="col"></div> -->
+
+<form hx-post="{% url 'contacts:upload' %}" hx-swap="innerHTML" hx-target="#response-container"
+    enctype="multipart/form-data" method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Upload VCF</button>
+</form>
+
+<div id="response-container">
+    <!-- Response from the server will be swapped here -->
+</div>
+
 {% endblock %}

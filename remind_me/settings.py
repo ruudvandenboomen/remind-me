@@ -14,18 +14,29 @@ import os
 from pathlib import Path
 
 from django.urls import reverse_lazy
+from pydantic_settings import BaseSettings
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-57q2%0x!n)wjj1tjocne(ip)x#nl@)z-kjt2a(@2=_hk^g9v_g"
+class SettingsFromEnvironment(BaseSettings):
+    """Defines environment variables with their types and optional defaults"""
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+    SECRET_KEY: str
+    DEBUG: bool = False
+
+    class Config:
+        """Defines configuration for pydantic environment loading"""
+
+        env_file = str(BASE_DIR / ".env")
+        case_sensitive = True
+
+
+config = SettingsFromEnvironment()
+
+SECRET_KEY = config.SECRET_KEY
+DEBUG = config.DEBUG
 
 ALLOWED_HOSTS = []
 
@@ -40,7 +51,9 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django_htmx",
-    "contact",
+    "contacts",
+    "users",
+    "django_extensions",
 ]
 
 MIDDLEWARE = [
@@ -135,7 +148,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
-LOGIN_REDIRECT_URL = reverse_lazy("contact:contact-list")
-LOGOUT_REDIRECT_URL = "/"
+LOGIN_REDIRECT_URL = reverse_lazy("contacts:contact-list")
+LOGOUT_REDIRECT_URL = reverse_lazy("users:login")
 LOGIN_URL = "/login"
 LOGOUT_URL = "/logout"

@@ -1,0 +1,25 @@
+{% extends "../base/base.html" %}
+
+{% block content %}
+<div class="relative flex size-full min-h-screen flex-col group/design-root overflow-x-hidden"
+    style='font-family: Inter, "Noto Sans", sans-serif;'>
+    <div class="layout-container flex h-full grow flex-col">
+        <div class="px-40 flex flex-1 justify-center py-5">
+            <div class="layout-content-container flex flex-col max-w-[760px] flex-1">
+                <h2 class="text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">
+                    Upcoming Events</h2>
+                {% for event in contacts %}
+                {% include "../contacts/partials/event.html" %}
+                {% empty %}
+                <p style="text-align: center;">No contacts in your shelf 🙈</p>
+                {% endfor %}
+                <div class="flex px-4 py-3">
+                    <a href="{% url 'contacts:upload' %}" class="btn btn-wide grow">
+                        <span class="truncate">Add Reminder</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

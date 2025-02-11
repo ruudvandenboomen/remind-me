@@ -1,5 +1,5 @@
 <form
-    hx-post="{% url 'contact:quick-edit' pk=contact.pk %}"
+    hx-post="{% url 'contacts:quick-edit' pk=contact.pk %}"
     hx-target="this"
     hx-swap="outerHTML">
     <input name='name' value="{{ contact.name }}">
