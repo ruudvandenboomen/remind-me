@@ -14,7 +14,7 @@ import os
 from pathlib import Path
 
 from django.urls import reverse_lazy
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,11 +26,15 @@ class SettingsFromEnvironment(BaseSettings):
     SECRET_KEY: str
     DEBUG: bool = False
 
-    class Config:
-        """Defines configuration for pydantic environment loading"""
+    DB_NAME: str
+    DB_USER: str
+    DB_PASSWORD: str
 
-        env_file = str(BASE_DIR / ".env")
-        case_sensitive = True
+    ALLOWED_HOSTS: list[str] = []
+
+    model_config = SettingsConfigDict(
+        env_file=str(BASE_DIR / ".env"), case_sensitive=True, env_file_encoding="utf-8"
+    )
 
 
 config = SettingsFromEnvironment()
@@ -38,7 +42,7 @@ config = SettingsFromEnvironment()
 SECRET_KEY = config.SECRET_KEY
 DEBUG = config.DEBUG
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = config.ALLOWED_HOSTS
 
 
 # Application definition
@@ -94,8 +98,12 @@ WSGI_APPLICATION = "remind_me.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": config.DB_NAME,
+        "USER": config.DB_USER,
+        "PASSWORD": config.DB_PASSWORD,
+        "HOST": "db",
+        "PORT": "5432",
     }
 }
 

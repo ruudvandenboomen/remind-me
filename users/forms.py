@@ -12,7 +12,7 @@ class CustomUserCreationForm(UserCreationForm):
             }
         ),
     )
-    password = forms.CharField(
+    password1 = forms.CharField(
         widget=forms.PasswordInput(
             attrs={
                 "class": "grow",

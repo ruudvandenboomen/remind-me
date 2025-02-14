@@ -1,0 +1,22 @@
+# Ignore Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore virtual environments
+venv/
+.env
+
+# Ignore system files
+.DS_Store
+.idea/
+.vscode/
+
+# Ignore logs and database files
+*.log
+*.sqlite3
+
+# Ignore static and media files (optional, if served externally)
+static/
+media/

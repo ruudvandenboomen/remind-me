@@ -21,7 +21,10 @@
     </label>
     <div class="flex-none">
         <ul class="menu menu-horizontal px-1">
-            <li><a hx-post="{% url 'users:logout' %}" hx-swap="none">Logout</a></li>
+            <form action="{% url 'users:logout' %}" method="post">
+                {% csrf_token %}
+                <button type="submit">Logout</button>
+            </form>
         </ul>
     </div>
 </div>

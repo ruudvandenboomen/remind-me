@@ -11,7 +11,7 @@
                 {% for event in contacts %}
                 {% include "../contacts/partials/event.html" %}
                 {% empty %}
-                <p style="text-align: center;">No contacts in your shelf 🙈</p>
+                <p style="text-align: center;">No events 🙈</p>
                 {% endfor %}
                 <div class="flex px-4 py-3">
                     <a href="{% url 'contacts:upload' %}" class="btn btn-wide grow">
